@@ -2,11 +2,16 @@ import React, { Component } from 'react';
 import Navbar from "./Navbar.jsx";
 import "./Upload.css"
 
+
 export class Upload extends Component {
   state={
-    profileImg:'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'
-  }
+    Img:null,
+	person:null,
+	profileImg:'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+  };
   imageHandler = (e) => {
+	  console.log(e.target.files[0])
+      this.setState({Img:e.target.files[0]})
     const reader = new FileReader();
     reader.onload = () =>{
       if(reader.readyState === 2){
@@ -14,7 +19,46 @@ export class Upload extends Component {
       }
     }
     reader.readAsDataURL(e.target.files[0])
+	
   };
+
+  /*filehandler = (e) =>{
+	  const fd=new FormData();
+	  fd.append("image",this.state.Img);
+	  console.log(this.state.Img.name)
+	  console.log("finally hello dear")
+
+	  fetch("/app/predict",{
+		 method:'POST',
+		 body: fd
+	  }).then(response=>response.json())
+	  .then(message=>console.log(message))
+
+	  console.log("done")
+
+  };*/
+  filehandler = async(e) =>{
+	const fd=new FormData();
+	fd.append("image",this.state.Img);
+	console.log(this.state.Img.name)
+	console.log("finally hello dear")
+
+	const response= await fetch("/app/predict",{
+	   method:'POST',
+	   body: fd
+	});
+	const data= await response.json();
+	console.log(data);
+	this.setState({person:data.imge})
+	console.log(data.imge);
+	/*
+	.then(response=>response.json())
+	.then(message=>console.log(message))
+	*/
+
+	console.log("done")
+
+};
 	render() {
     const { profileImg} = this.state
 		return (
